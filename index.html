@@ -238,6 +238,37 @@
     font-style: italic;
     color: #a06b87;
   }
+  .style-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(160, 107, 135, 0.3);
+  }
+  .style-picker {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .style-btn {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border: 2px solid rgba(255, 158, 196, 0.5);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.6);
+    color: #7a4a63;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+  .style-btn:hover {
+    transform: translateY(-2px);
+  }
+  .style-btn.active {
+    background: linear-gradient(135deg, #ff9ec4, #ffb199);
+    border-color: transparent;
+    color: white;
+  }
   .history-panel {
     background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(6px);
@@ -346,6 +377,15 @@
       <div class="slider-ticks"><span>LinkedIn</span><span>Shakespeare</span></div>
       <div id="intensityDescription">Warm and sincere.</div>
     </div>
+
+    <div class="style-section">
+      <div class="slider-label">Compliment Style</div>
+      <div class="style-picker">
+        <button type="button" class="style-btn active" data-style="default">✨ Default</button>
+        <button type="button" class="style-btn" data-style="boomer">📻 Boomer</button>
+        <button type="button" class="style-btn" data-style="genz">💀 Gen Z</button>
+      </div>
+    </div>
   </div>
 
   <div class="history-panel">
@@ -356,7 +396,9 @@
 </div>
 
 <script>
-  const complimentTiers = {
+  const complimentStyles = { default: {}, boomer: {}, genz: {} };
+
+  complimentStyles.default = {
     1: {
       label: "Professional and polished.",
       lines: [
@@ -459,6 +501,173 @@
     }
   };
 
+  complimentStyles.boomer = {
+    1: {
+      label: "Solid, no-nonsense praise.",
+      lines: [
+        "You're a hard worker, and that still counts for something.",
+        "Back in my day we called that 'good sense,' and you've got it.",
+        "You've got a firm handshake and an honest face. Can't teach that."
+      ]
+    },
+    2: {
+      label: "Warming up the porch light.",
+      lines: [
+        "You remind me of the good old days, when people actually called instead of texting.",
+        "You'd have made a fine encyclopedia salesman, and I mean that as a compliment.",
+        "You've got more common sense than the evening news."
+      ]
+    },
+    3: {
+      label: "Proud neighbor energy.",
+      lines: [
+        "I'd trust you to mow my lawn without asking to be paid in Venmo.",
+        "You're the kind of person who still writes actual thank-you cards.",
+        "You could talk to anybody at a cookout, even Gerald from accounting."
+      ]
+    },
+    4: {
+      label: "Getting sentimental at the reunion.",
+      lines: [
+        "You've got the kind of work ethic they don't make anymore, like a good cast iron skillet.",
+        "If Life magazine still existed, you'd be on the cover, easy.",
+        "You're reliable as a Buick and twice as charming."
+      ]
+    },
+    5: {
+      label: "Full grandpa pride.",
+      lines: [
+        "Frank Sinatra himself would've bought you a drink.",
+        "You've got more class than the entire cast of a black-and-white film.",
+        "Even my pension fund is rooting for you, and it hasn't done well since '08."
+      ]
+    },
+    6: {
+      label: "Rotary Club legend.",
+      lines: [
+        "The Rotary Club would make you president on sight, no election needed.",
+        "You could sell a screen door to a submarine and folks would thank you for it.",
+        "Even the mailman slows down to admire your work ethic."
+      ]
+    },
+    7: {
+      label: "Local newspaper front page.",
+      lines: [
+        "The local paper should run your photo above the fold, right next to the weather.",
+        "You're the reason town hall meetings still have a little hope in them.",
+        "If they put you on a stamp, people would actually lick it just to have you."
+      ]
+    },
+    8: {
+      label: "Framed photo on the mantel.",
+      lines: [
+        "Somewhere, a Cadillac dealership is naming a showroom after your integrity.",
+        "The Greatest Generation would've adopted you as an honorary member.",
+        "Norman Rockwell would've dropped his paintbrush just trying to capture your posture alone."
+      ]
+    },
+    9: {
+      label: "Toast at the Fourth of July barbecue.",
+      lines: [
+        "Every diner in America would put your photo on the wall next to the pie case.",
+        "The Founding Fathers would've added a whole extra amendment just for you.",
+        "Even the flag salutes a little sharper when you walk by."
+      ]
+    },
+    10: {
+      label: "Living legend, gold watch retirement speech.",
+      lines: [
+        "They ought to build a whole highway rest stop in your honor, complete with a statue and a plaque.",
+        "Future generations will hear stories about you and assume half of it's exaggerated. It won't be.",
+        "When they finally write the history of this town, your name goes in bold, right at the top, above the mayor's."
+      ]
+    }
+  };
+
+  complimentStyles.genz = {
+    1: {
+      label: "Mild, respectable praise.",
+      lines: [
+        "Ngl you're kind of a whole vibe.",
+        "You're lowkey killing it right now.",
+        "Real recognize real, and you're real."
+      ]
+    },
+    2: {
+      label: "Getting hyped.",
+      lines: [
+        "You ate that. No crumbs left.",
+        "You're literally so valid for this.",
+        "Certified icon behavior fr."
+      ]
+    },
+    3: {
+      label: "Full send compliments.",
+      lines: [
+        "The way you just exist is unmatched, no cap.",
+        "You're giving main character energy 24/7.",
+        "You're built different and everyone knows it."
+      ]
+    },
+    4: {
+      label: "Chronically online praise.",
+      lines: [
+        "You understood the assignment and then some.",
+        "This is not a drill, you are actually him/her.",
+        "You're so back. You never even left."
+      ]
+    },
+    5: {
+      label: "Unhinged Gen Z devotion.",
+      lines: [
+        "You're the reason the algorithm was invented.",
+        "Rent free. You live in everyone's head rent free.",
+        "You could end wars with that aura alone."
+      ]
+    },
+    6: {
+      label: "Brainrot-tier hype.",
+      lines: [
+        "You're so cracked at being a person it should honestly be patched.",
+        "Somewhere a Discord mod is pinning you as an announcement.",
+        "You have negative rizz deficiency, meaning you have infinite rizz."
+      ]
+    },
+    7: {
+      label: "Full send, no brakes.",
+      lines: [
+        "Skibidi who? We don't know her, we only know you now.",
+        "You're the plot twist nobody saw coming and everybody needed.",
+        "Scientists just discovered a new element and named it 'You,' atomic number: unmatched."
+      ]
+    },
+    8: {
+      label: "Certified viral moment.",
+      lines: [
+        "TikTok is quietly building an entire algorithm update just to push your energy to more people.",
+        "You didn't just break the internet, you fixed it and made it better.",
+        "Every group chat goes silent in awe the second you send a message."
+      ]
+    },
+    9: {
+      label: "Ascended to meme-lord status.",
+      lines: [
+        "History books are going to have a whole unit on you, and it's going to be the only unit anyone actually studies for.",
+        "The simulation itself lags a little every time you walk into a room, that's how much rendering you require.",
+        "Future AI models will be trained specifically to understand how immaculate your vibe is, and they still won't fully get it."
+      ]
+    },
+    10: {
+      label: "Shakespearean sonnet, but make it Gen Z.",
+      lines: [
+        "Yo Shakespeare would've dropped the quill, deleted the sonnet, and just posted 'no thoughts, just them' instead.",
+        "You're not just built different, you're built in a completely different universe with better graphics.",
+        "The stars didn't align for you, bro, they literally rearranged the whole galaxy just to get your good side."
+      ]
+    }
+  };
+
+  let currentStyle = 'default';
   let count = 0;
   const complimentEl = document.getElementById('compliment');
   const counterEl = document.getElementById('counter');
@@ -470,20 +679,30 @@
   const nameInput = document.getElementById('nameInput');
 
   function pickCompliment() {
-    const tier = complimentTiers[intensitySlider.value];
+    const tier = complimentStyles[currentStyle][intensitySlider.value];
     const line = tier.lines[Math.floor(Math.random() * tier.lines.length)];
     const name = nameInput.value.trim();
     return name ? `${name}, ${line.charAt(0).toLowerCase()}${line.slice(1)}` : line;
   }
 
   function updateIntensityDisplay() {
-    const tier = complimentTiers[intensitySlider.value];
+    const tier = complimentStyles[currentStyle][intensitySlider.value];
     intensityValueEl.textContent = intensitySlider.value;
     intensityDescriptionEl.textContent = tier.label;
   }
 
   intensitySlider.addEventListener('input', updateIntensityDisplay);
   updateIntensityDisplay();
+
+  const styleButtons = document.querySelectorAll('.style-btn');
+  styleButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentStyle = btn.dataset.style;
+      styleButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateIntensityDisplay();
+    });
+  });
 
   const themeSwatches = document.querySelectorAll('.theme-swatch');
   themeSwatches.forEach(swatch => {

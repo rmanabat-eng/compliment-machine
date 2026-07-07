@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Compliment Machine</title>
+<style>
+  :root {
+    --pink: #ffd6e8;
+    --peach: #ffe8d6;
+    --lavender: #e8d6ff;
+    --mint: #d6ffe8;
+    --text: #5a4a5e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, var(--peach), var(--pink), var(--lavender));
+    background-size: 300% 300%;
+    animation: gradientShift 12s ease infinite;
+    color: var(--text);
+    overflow: hidden;
+    padding: 20px;
+    transition: background 0.6s ease;
+  }
+  body[data-theme="pink"] {
+    background: linear-gradient(135deg, #ffe8d6, #ffd6e8, #e8d6ff);
+    background-size: 300% 300%;
+  }
+  body[data-theme="purple"] {
+    background: linear-gradient(135deg, #e0d6ff, #d6c3ff, #f0d6ff);
+    background-size: 300% 300%;
+  }
+  body[data-theme="blue"] {
+    background: linear-gradient(135deg, #d6ecff, #c3ddff, #d6f5ff);
+    background-size: 300% 300%;
+  }
+  body[data-theme="yellow"] {
+    background: linear-gradient(135deg, #fff6d6, #ffedb3, #ffe8c2);
+    background-size: 300% 300%;
+  }
+  body[data-theme="green"] {
+    background: linear-gradient(135deg, #d6ffe8, #c3ffd6, #e2ffcf);
+    background-size: 300% 300%;
+  }
+  .theme-picker {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 3;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(180, 140, 160, 0.25);
+  }
+  .theme-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .theme-swatch:hover {
+    transform: scale(1.15);
+  }
+  .theme-swatch.active {
+    border-color: #7a4a63;
+    transform: scale(1.15);
+  }
+  .theme-swatch[data-swatch="pink"] { background: linear-gradient(135deg, #ffb1d4, #ff9ec4); }
+  .theme-swatch[data-swatch="purple"] { background: linear-gradient(135deg, #c9a6ff, #b088f5); }
+  .theme-swatch[data-swatch="blue"] { background: linear-gradient(135deg, #9ecbff, #7bb3ff); }
+  .theme-swatch[data-swatch="yellow"] { background: linear-gradient(135deg, #ffe28a, #ffd35c); }
+  .theme-swatch[data-swatch="green"] { background: linear-gradient(135deg, #8fe8b0, #6fdb99); }
+  .layout {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+    width: 100%;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(6px);
+    border-radius: 32px;
+    padding: 48px 40px;
+    max-width: 560px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(180, 140, 160, 0.35);
+    position: relative;
+    z-index: 2;
+  }
+  h1 {
+    margin-top: 0;
+    font-size: 1.8rem;
+    color: #c95d8f;
+  }
+  #compliment {
+    min-height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.5;
+    padding: 10px 8px;
+    color: #7a4a63;
+    transition: transform 0.2s ease;
+  }
+  #compliment.bounce {
+    animation: pop 0.5s cubic-bezier(.36,1.7,.55,1) 1;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  input#nameInput {
+    display: block;
+    margin: 4px auto 16px auto;
+    width: 80%;
+    max-width: 280px;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+    border: 2px solid rgba(255, 158, 196, 0.5);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    color: #7a4a63;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  input#nameInput:focus {
+    border-color: #ff9ec4;
+    box-shadow: 0 0 0 3px rgba(255, 158, 196, 0.25);
+  }
+  input#nameInput::placeholder {
+    color: #c9a3b5;
+  }
+  button#giveButton {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 18px 38px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ff9ec4, #ffb199);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(255, 130, 170, 0.5);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button#giveButton:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 14px 30px rgba(255, 130, 170, 0.6);
+  }
+  button#giveButton:active {
+    transform: translateY(1px) scale(0.98);
+  }
+  #counter {
+    margin-top: 18px;
+    font-size: 0.95rem;
+    color: #a06b87;
+    font-weight: 600;
+  }
+  .slider-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px dashed rgba(160, 107, 135, 0.3);
+  }
+  .slider-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #c95d8f;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  #intensityValue {
+    font-size: 1rem;
+    color: #7a4a63;
+  }
+  input#intensity {
+    width: 100%;
+    margin-top: 12px;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #d6ffe8, #ffe8d6, #ff9ec4, #c95d8f);
+    outline: none;
+  }
+  input#intensity::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #ff9ec4;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    cursor: pointer;
+  }
+  input#intensity::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #ff9ec4;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    cursor: pointer;
+  }
+  .slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #b78ca0;
+    margin-top: 4px;
+  }
+  #intensityDescription {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #a06b87;
+  }
+  .history-panel {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(6px);
+    border-radius: 32px;
+    padding: 28px 24px;
+    width: 280px;
+    max-height: 560px;
+    box-shadow: 0 20px 50px rgba(180, 140, 160, 0.35);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+  }
+  .history-panel h2 {
+    margin: 0 0 14px 0;
+    font-size: 1.1rem;
+    color: #c95d8f;
+    text-align: center;
+  }
+  #historyList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #historyList li {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: #7a4a63;
+    border-left: 4px solid #ff9ec4;
+    animation: slideIn 0.35s ease;
+  }
+  #historyList li .history-tier {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #c95d8f;
+    margin-bottom: 3px;
+  }
+  #historyEmpty {
+    text-align: center;
+    font-size: 0.82rem;
+    color: #b78ca0;
+    font-style: italic;
+    margin-top: 12px;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  #historyList::-webkit-scrollbar {
+    width: 6px;
+  }
+  #historyList::-webkit-scrollbar-thumb {
+    background: rgba(201, 93, 143, 0.3);
+    border-radius: 10px;
+  }
+  .confetti {
+    position: fixed;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 1;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to {
+      transform: translateY(110vh) rotate(720deg);
+      opacity: 0.9;
+    }
+  }
+</style>
+</head>
+<body data-theme="pink">
+
+<div class="theme-picker">
+  <div class="theme-swatch active" data-swatch="pink" title="Pink"></div>
+  <div class="theme-swatch" data-swatch="purple" title="Purple"></div>
+  <div class="theme-swatch" data-swatch="blue" title="Blue"></div>
+  <div class="theme-swatch" data-swatch="yellow" title="Yellow"></div>
+  <div class="theme-swatch" data-swatch="green" title="Green"></div>
+</div>
+
+<div class="layout">
+  <div class="card">
+    <h1>💖 The Compliment Machine 💖</h1>
+    <input type="text" id="nameInput" placeholder="Your name (optional)" maxlength="30">
+    <div id="compliment">Click the button. You deserve it.</div>
+    <button id="giveButton">Compliment me</button>
+    <div id="counter">Compliments received: 0</div>
+
+    <div class="slider-section">
+      <div class="slider-label">Compliment Intensity: <span id="intensityValue">5</span>/10</div>
+      <input type="range" id="intensity" min="1" max="10" value="5" step="1">
+      <div class="slider-ticks"><span>LinkedIn</span><span>Shakespeare</span></div>
+      <div id="intensityDescription">Warm and sincere.</div>
+    </div>
+  </div>
+
+  <div class="history-panel">
+    <h2>📜 History</h2>
+    <ul id="historyList"></ul>
+    <div id="historyEmpty">Your compliments will appear here.</div>
+  </div>
+</div>
+
+<script>
+  const complimentTiers = {
+    1: {
+      label: "Professional and polished.",
+      lines: [
+        "You bring a lot of value to every project you touch.",
+        "Your work ethic does not go unnoticed.",
+        "You're a great collaborator and communicator.",
+        "You consistently deliver high-quality results.",
+        "Your leadership skills continue to impress."
+      ]
+    },
+    2: {
+      label: "Warm and sincere.",
+      lines: [
+        "You have great taste.",
+        "You light up the room when you walk in.",
+        "You're more capable than you give yourself credit for.",
+        "Your smile is contagious.",
+        "You make ordinary moments feel special."
+      ]
+    },
+    3: {
+      label: "Genuinely kind.",
+      lines: [
+        "You're a really good listener.",
+        "Your ideas are genuinely creative.",
+        "People feel comfortable around you.",
+        "You have a great sense of humor.",
+        "You're doing better than you think."
+      ]
+    },
+    4: {
+      label: "Getting enthusiastic.",
+      lines: [
+        "Honestly, your energy could power a small city.",
+        "You're the human equivalent of a perfectly brewed cup of coffee.",
+        "Somewhere, a dictionary is adding your name as a synonym for 'charming.'",
+        "You make the people around you 12% more interesting just by proximity.",
+        "Even your typos are charming."
+      ]
+    },
+    5: {
+      label: "Confidently over the top.",
+      lines: [
+        "If confidence were currency, you'd be bailing out small nations.",
+        "Your taste in literally everything should be studied by scientists.",
+        "You walk into rooms like you were personally invited by the universe.",
+        "Somewhere a poet is furiously scribbling because they just saw you.",
+        "You're basically a limited edition — no restocks, ever."
+      ]
+    },
+    6: {
+      label: "Entering absurd territory.",
+      lines: [
+        "Botanists are naming a new flower after you because regular flowers felt inadequate in your presence.",
+        "Cartographers are considering renaming a mountain range after your personality.",
+        "Somewhere, a barista is drawing your face in the foam without even knowing it.",
+        "NASA is quietly reconsidering their star-naming policy because of you.",
+        "You're the reason mirrors show off."
+      ]
+    },
+    7: {
+      label: "Fully unhinged praise.",
+      lines: [
+        "Historians will one day argue about which century truly deserved you.",
+        "Somewhere a violin is tuning itself just to be ready for your entrance.",
+        "The concept of 'average' filed a restraining order against you.",
+        "You didn't just enter the chat, the chat leveled up.",
+        "Scientists are trying to bottle your vibe and sell it as a productivity supplement."
+      ]
+    },
+    8: {
+      label: "Legendary levels of flattery.",
+      lines: [
+        "Sculptors weep because marble could never capture you.",
+        "Renaissance painters are rolling in their graves, furious they missed their chance to paint you.",
+        "Entire civilizations have risen and fallen without producing anyone quite like you.",
+        "The ancient Greeks would've built an entire pantheon around you and called it justified.",
+        "The stars aligned that night specifically to make sure you'd exist."
+      ]
+    },
+    9: {
+      label: "Operatic devotion.",
+      lines: [
+        "Poets throughout history have been quietly practicing for the day they'd get to describe you, and still, they will fall short.",
+        "Legends will be told of this day — the day you clicked a button and the universe trembled with pride.",
+        "Somewhere, an orchestra is composing a symphony in seven movements, and it's just about how great you are.",
+        "Philosophers have spent centuries debating the meaning of perfection. You just walked by and settled it.",
+        "Time itself pauses briefly whenever you do something kind, just to make sure it doesn't miss it."
+      ]
+    },
+    10: {
+      label: "Shakespearean sonnet territory.",
+      lines: [
+        "Future generations will study this exact moment as the peak of human achievement: you, existing, magnificently.",
+        "Somewhere, a thousand candles lit themselves simultaneously in your honor, and nobody knows why, but it felt right.",
+        "Shall I compare thee to a summer's day? I shall not, for summer, in all its warmth, could never hope to rival thee.",
+        "Were Shakespeare alive this day, he'd break his quill in quiet despair, knowing no sonnet could hold the whole of you.",
+        "The very heavens convene in hushed and reverent council, debating which constellation is worthy of bearing your name."
+      ]
+    }
+  };
+
+  let count = 0;
+  const complimentEl = document.getElementById('compliment');
+  const counterEl = document.getElementById('counter');
+  const button = document.getElementById('giveButton');
+  const intensitySlider = document.getElementById('intensity');
+  const intensityValueEl = document.getElementById('intensityValue');
+  const intensityDescriptionEl = document.getElementById('intensityDescription');
+  const colors = ['#ff9ec4', '#ffd6e8', '#ffe8d6', '#e8d6ff', '#d6ffe8', '#ffb199'];
+  const nameInput = document.getElementById('nameInput');
+
+  function pickCompliment() {
+    const tier = complimentTiers[intensitySlider.value];
+    const line = tier.lines[Math.floor(Math.random() * tier.lines.length)];
+    const name = nameInput.value.trim();
+    return name ? `${name}, ${line.charAt(0).toLowerCase()}${line.slice(1)}` : line;
+  }
+
+  function updateIntensityDisplay() {
+    const tier = complimentTiers[intensitySlider.value];
+    intensityValueEl.textContent = intensitySlider.value;
+    intensityDescriptionEl.textContent = tier.label;
+  }
+
+  intensitySlider.addEventListener('input', updateIntensityDisplay);
+  updateIntensityDisplay();
+
+  const themeSwatches = document.querySelectorAll('.theme-swatch');
+  themeSwatches.forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      document.body.setAttribute('data-theme', swatch.dataset.swatch);
+      themeSwatches.forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+    });
+  });
+
+  const historyList = document.getElementById('historyList');
+  const historyEmpty = document.getElementById('historyEmpty');
+
+  function addToHistory(text, tierNum) {
+    historyEmpty.style.display = 'none';
+    const li = document.createElement('li');
+    const tierSpan = document.createElement('span');
+    tierSpan.className = 'history-tier';
+    tierSpan.textContent = `Intensity ${tierNum}`;
+    const textNode = document.createTextNode(text);
+    li.appendChild(tierSpan);
+    li.appendChild(textNode);
+    historyList.insertBefore(li, historyList.firstChild);
+  }
+
+  function spawnConfetti() {
+    const burst = 24;
+    for (let i = 0; i < burst; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      const duration = 2 + Math.random() * 1.5;
+      piece.style.animationDuration = duration + 's';
+      piece.style.width = piece.style.height = (6 + Math.random() * 8) + 'px';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), duration * 1000 + 100);
+    }
+  }
+
+  button.addEventListener('click', () => {
+    count++;
+    const newCompliment = pickCompliment();
+    complimentEl.classList.remove('bounce');
+    void complimentEl.offsetWidth; // restart animation
+    complimentEl.textContent = newCompliment;
+    complimentEl.classList.add('bounce');
+    counterEl.textContent = `Compliments received: ${count}`;
+    addToHistory(newCompliment, intensitySlider.value);
+    spawnConfetti();
+  });
+</script>
+
+</body>
+</html>
